@@ -1,4 +1,5 @@
 from flask import Flask, url_for, request, json, jsonify
+from werkzeug.exceptions import HTTPException
 from json import dumps
 from user import User
 
@@ -90,6 +91,17 @@ def api_listusers():
     
     #return jsonify(UserList=res)
     return jsonify(res)
+    
+@app.errorhandler(HTTPException)
+def handle_exception(e):
+    response = e.get_response()
+    response.data = json.dumps({
+        "code": e.code,
+        "name": e.name,
+        "description": e.description,
+    })
+    response.content_type = "application/json"
+    return response
 
 if __name__ == '__main__':
     app.run()

@@ -1,4 +1,4 @@
-class User:
+class User(object):
     __id = None
     __nome = None    
     __idade = None
@@ -21,6 +21,14 @@ class User:
 
     def getUserCidade(self):
         return self.__cidade
+
+    def setUserNome(self,nome):
+        self.__nome = nome
+        return self
+
+    def setUserCidade(self,cidade):
+        self.__cidade = cidade
+        return self        
 
     def getUserName(self, id):
         retorno = ""
