@@ -1,4 +1,4 @@
-class User(object):
+class Materia(object):
     __id = None
     __nome = None    
     __horas = None

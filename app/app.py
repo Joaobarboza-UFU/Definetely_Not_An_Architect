@@ -1,21 +1,20 @@
 from flask import Flask, url_for, request, json, jsonify
-from werkzeug.exceptions import HTTPException
 from json import dumps
 from user import User
 
 app = Flask(__name__)
+# Banco de dados e auth a implementar
+roles = [['ADMIN'],['DIRETOR'],['PROFESSOR'],['ALUNO']]
+user_repo = [['admin@domain.com','admin','ADMIN'],
+             ['diretor@domain.com','diretor','DIRETOR'],
+             ['professor@domain.com','professor','PROFESSOR'],
+             ['aluno@domain.com','aluno','ADMIN']]
+userRole = null
 myUser = []
-
-@app.route('/')
-def api_root():
-    return 'Seja bem-vindo!!!'
-
-@app.route('/hello')
-def api_hello(): 
-    if 'name' in request.args:
-        return 'Hello World, ' + request.args['name']
-    else:        
-        return 'Hello World, my friend'
+myAlunos = []
+myProfessores = []
+myDisciplinas = []
+myDisciplinaAlunos = []
 
 @app.route('/echo', methods = ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'])
 def api_echo():
@@ -92,16 +91,62 @@ def api_listusers():
     #return jsonify(UserList=res)
     return jsonify(res)
     
-@app.errorhandler(HTTPException)
-def handle_exception(e):
-    response = e.get_response()
-    response.data = json.dumps({
-        "code": e.code,
-        "name": e.name,
-        "description": e.description,
-    })
-    response.content_type = "application/json"
-    return response
+#Alunos
+
+@app.route('/alunos', methods = ['GET'])
+def get_aluno():
+@app.route('/alunos', methods = ['POST'])
+def create_aluno():
+@app.route('/alunos', methods = ['PUT'])
+def alter_aluno():
+@app.route('/alunos', methods = ['DELETE'])
+def delete_aluno():
+
+#Professores
+
+@app.route('/professores', methods = ['GET'])
+def get_professores():
+    global myUser
+    user_data = request.get_json() 
+    print(user_data)
+    codUser = user_data['codigo']
+    print(codUser)
+    print(myUser[0].getUserNome())
+    res = {'status': 'usuario nao encontrado'}
+    for elem in myUser:
+        if(int(codUser) == elem.getUserId()):
+            res = {'nome': elem.getUserNome()}
+        
+    return jsonify(res)
+@app.route('/professores', methods = ['POST'])
+def create_professores():
+@app.route('/professores/<id>', methods = ['PUT'])
+def alter_professores():
+@app.route('/professores/<id>', methods = ['DELETE'])
+def delete_professores():
+
+#Materias
+
+@app.route('/materias', methods = ['GET'])
+def get_materias():
+    global myUser
+    user_data = request.get_json() 
+    print(user_data)
+    codUser = user_data['codigo']
+    print(codUser)
+    print(myUser[0].getUserNome())
+    res = {'status': 'usuario nao encontrado'}
+    for elem in myUser:
+        if(int(codUser) == elem.getUserId()):
+            res = {'nome': elem.getUserNome()}
+        
+    return jsonify(res)
+@app.route('/materias', methods = ['POST'])
+def create_materias():
+@app.route('/materias/<id>', methods = ['PUT'])
+def alter_materias():
+@app.route('/materias/<id>', methods = ['DELETE'])
+def delete_materias():
 
 if __name__ == '__main__':
     app.run()
