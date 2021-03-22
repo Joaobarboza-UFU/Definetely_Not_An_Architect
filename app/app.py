@@ -1,20 +1,26 @@
 from flask import Flask, url_for, request, json, jsonify
 from json import dumps
 from user import User
+import aluno as Aluno
+import materia as Materia
+import materiasAluno as MateriasAluno
 
 app = Flask(__name__)
-# Banco de dados e auth a implementar
-roles = [['ADMIN'],['DIRETOR'],['PROFESSOR'],['ALUNO']]
-user_repo = [['admin@domain.com','admin','ADMIN'],
-             ['diretor@domain.com','diretor','DIRETOR'],
-             ['professor@domain.com','professor','PROFESSOR'],
-             ['aluno@domain.com','aluno','ADMIN']]
-userRole = null
 myUser = []
 myAlunos = []
-myProfessores = []
-myDisciplinas = []
-myDisciplinaAlunos = []
+myMaterias = []
+myAlunosMaterias = []
+
+@app.route('/')
+def api_root():
+    return 'Seja bem-vindo!!!'
+
+@app.route('/hello')
+def api_hello(): 
+    if 'name' in request.args:
+        return 'Hello ' + request.args['name']
+    else:        
+        return 'Hello John Doe'
 
 @app.route('/echo', methods = ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'])
 def api_echo():
@@ -25,15 +31,14 @@ def api_echo():
         return "ECHO: POST\n"
 
     elif request.method == 'PATCH':
-        return "ECHO: PATCH\n"
+        return "ECHO: PACTH\n"
 
     elif request.method == 'PUT':
         return "ECHO: PUT\n"
 
     elif request.method == 'DELETE':
         return "ECHO: DELETE"
-
-@app.route('/createuser') 
+@app.route('/createuser')
 def api_createuser():
     global myUser
     myUser.append(User(1, "Joao", 12, "São Paulo"))
@@ -80,73 +85,72 @@ def api_listusers():
     content = {}
     
     for elem in myUser:        
-        content = {'id': str(elem.getUserId()),'[nome]': elem.getUserNome(), 
-        '[idade]': str(elem.getUserIdade()), '[cidade]': elem.getUserCidade()}
+        content = {'id': str(elem.getUserId()),
+                   '[nome]': elem.getUserNome(), 
+                   '[idade]': str(elem.getUserIdade()), 
+                   '[cidade]': elem.getUserCidade()}
         payload.append(content)
         content = {}
 
     res =  json.dumps(payload)       
     res =  payload       
     
-    #return jsonify(UserList=res)
     return jsonify(res)
+
     
-#Alunos
+@app.route('/aluno', methods = ['GET'])
+def api_getaluno():
+    global myAlunos
+    return Aluno.getAluno(myAlunos)
 
-@app.route('/alunos', methods = ['GET'])
-def get_aluno():
-@app.route('/alunos', methods = ['POST'])
-def create_aluno():
-@app.route('/alunos', methods = ['PUT'])
-def alter_aluno():
-@app.route('/alunos', methods = ['DELETE'])
-def delete_aluno():
+@app.route('/aluno', methods = ['POST'])
+def api_createaluno():
+    global myAlunos
+    return Aluno.createAluno(myAlunos)
 
-#Professores
-
-@app.route('/professores', methods = ['GET'])
-def get_professores():
-    global myUser
-    user_data = request.get_json() 
-    print(user_data)
-    codUser = user_data['codigo']
-    print(codUser)
-    print(myUser[0].getUserNome())
-    res = {'status': 'usuario nao encontrado'}
-    for elem in myUser:
-        if(int(codUser) == elem.getUserId()):
-            res = {'nome': elem.getUserNome()}
+@app.route('/aluno/<id>', methods = ['PUT'])
+def api_alteraluno(id):
+    global myAlunos
+    return Aluno.alterAluno(myAlunos,id)
         
-    return jsonify(res)
-@app.route('/professores', methods = ['POST'])
-def create_professores():
-@app.route('/professores/<id>', methods = ['PUT'])
-def alter_professores():
-@app.route('/professores/<id>', methods = ['DELETE'])
-def delete_professores():
+@app.route('/aluno/<id>', methods = ['DELETE'])
+def api_deletealuno(id):
+    global myAlunos
+    return Aluno.deleteAluno(myAlunos,id)
 
-#Materias
+@app.route('/materia', methods = ['GET'])
+def api_getdisciplina():
+    global myDisciplinas
+    return Materia.getMaterias(myMaterias)
 
-@app.route('/materias', methods = ['GET'])
-def get_materias():
-    global myUser
-    user_data = request.get_json() 
-    print(user_data)
-    codUser = user_data['codigo']
-    print(codUser)
-    print(myUser[0].getUserNome())
-    res = {'status': 'usuario nao encontrado'}
-    for elem in myUser:
-        if(int(codUser) == elem.getUserId()):
-            res = {'nome': elem.getUserNome()}
-        
-    return jsonify(res)
-@app.route('/materias', methods = ['POST'])
-def create_materias():
-@app.route('/materias/<id>', methods = ['PUT'])
-def alter_materias():
-@app.route('/materias/<id>', methods = ['DELETE'])
-def delete_materias():
+@app.route('/materia', methods = ['POST'])
+def api_createdisciplina():
+    global myDisciplinas
+    return Materia.createMateria(myMaterias)
+
+@app.route('/materia/<id>', methods = ['PUT'])
+def api_altdisciplina(id):
+    global myDisciplinas
+    return Materia.alterMateria(myMaterias,id)
+
+@app.route('/materia/<id>', methods = ['DELETE'])
+def api_deletedisciplina(id):
+    global myDisciplinas
+    return Materia.deleteMateria(myMaterias,id)
+
+@app.route('/aluno/materia', methods = ['GET'])
+def api_getalunodisciplina():
+    global myAlunos
+    global myDisciplinas
+    global myAlunosDisciplinas
+    return MateriasAluno.getAlunoMateria(myAlunos,myMaterias,myAlunosMaterias)
+
+@app.route('/aluno/materia', methods = ['POST'])
+def api_createalunodisciplina():
+    global myAlunos
+    global myDisciplinas
+    global myAlunosDisciplinas
+    return MateriasAluno.createAlunoMateria(myAlunos,myMaterias,myAlunosMaterias)
 
 if __name__ == '__main__':
     app.run()

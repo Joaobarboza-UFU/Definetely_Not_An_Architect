@@ -1,32 +1,31 @@
-class User(object):
-    __id = None
-    __nome = None    
-    __idade = None
-    __cidade = None
+import uuid
+from flask import Flask, url_for, request, json, jsonify
+from json import dumps
 
+class User(object):
     def __init__(self, id, nome, idade, cidade):
-        self.__id = id
+        self.__id = uuid.uuid1()
         self.__nome = nome        
         self.__idade = idade
         self.__cidade = cidade
 
-    def getUserId(self):
+    def getId(self):
         return self.__id
 
-    def getUserNome(self):
+    def getNome(self):
         return self.__nome
 
-    def getUserIdade(self):
+    def getIdade(self):
         return self.__idade
 
-    def getUserCidade(self):
+    def getCidade(self):
         return self.__cidade
 
-    def setUserNome(self,nome):
+    def setNome(self,nome):
         self.__nome = nome
         return self
 
-    def setUserCidade(self,cidade):
+    def setCidade(self,cidade):
         self.__cidade = cidade
         return self        
 
